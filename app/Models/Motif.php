@@ -16,6 +16,6 @@ class Motif extends Model
     // Relationship with Produk
     public function produk()
     {
-        return $this->hasMany(Produk::class, 'motif_id');
+        return $this->hasMany(Product::class, 'motif_id', 'id');
     }
 }
