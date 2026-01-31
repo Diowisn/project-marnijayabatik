@@ -29,9 +29,14 @@ class ProductController extends Controller
         
         // Search
         if ($request->has('search')) {
-            $query->where('nama_produk', 'like', '%' . $request->search . '%')
+            $query->where(function($q) use ($request) {
+                $q->where('nama_produk', 'like', '%' . $request->search . '%')
                   ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
+            });
         }
+        
+        // Default order
+        $query->latest();
         
         $products = $query->paginate(12);
         $categories = Category::all();
@@ -41,7 +46,13 @@ class ProductController extends Controller
     
     public function show($id)
     {
-        $product = Product::with(['category', 'motif'])->findOrFail($id);
+        // PERBAIKAN: Tambahkan check untuk relasi
+        $product = Product::with(['kategori', 'motif'])->findOrFail($id);
+        
+        // Debug: Cek apakah relasi kategori ada
+        if (!$product->kategori) {
+            \Log::warning("Product {$id} doesn't have kategori relation");
+        }
         
         // Ambil gambar detail
         $gambarDetailArray = [];
@@ -67,7 +78,9 @@ class ProductController extends Controller
             }
         }
         
-        $relatedProducts = Product::where('kategori', $product->kategori)
+        // PERBAIKAN: Gunkan kolom 'kategori' untuk filter
+        $relatedProducts = Product::with(['kategori', 'motif'])
+            ->where('kategori', $product->kategori) // Kolom 'kategori' bukan relasi
             ->where('id_produk', '!=', $id)
             ->take(4)
             ->get();

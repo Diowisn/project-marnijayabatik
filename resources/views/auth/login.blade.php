@@ -370,6 +370,9 @@
                         <button type="submit" class="btn btn-login" id="loginButton">
                             <i class="bi bi-box-arrow-in-right me-2"></i>Masuk ke Dashboard
                         </button>
+                        <p class="footer-text" style="text-align: center;">
+                            Kembali ke <a href="{{ route ('home')}}"><span class="brand-name">Beranda</span></a>
+                        </p>
                     </div>
                 </form>
                 

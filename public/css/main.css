@@ -312,6 +312,17 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
   background-color: transparent;
 }
 
+.limiter-menu-desktop2 {
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: center;
+  background-color: #dea057;
+}
+
 
 
 /*------------------------------------------------------------------
@@ -1548,7 +1559,7 @@ button.mfp-close {
   right: 0;
   top: 0;
   color: transparent !important;
-  background-image: url(../images/icons/icon-close.png);
+  background-image: url(../assets/images/icons/icon-close.png);
   background-position: center center;
   background-repeat: no-repeat;
   cursor: pointer !important;
@@ -2150,6 +2161,7 @@ input.num-product::-webkit-inner-spin-button {
   font-family: Poppins-Regular;
   font-size: 14px;
   line-height: 1.7;
+  text-align: justify;
 }
 
 .stext-103 {
@@ -2187,6 +2199,7 @@ input.num-product::-webkit-inner-spin-button {
   font-family: Poppins-Light;
   font-size: 14px;
   line-height: 1.7143;
+  text-align: justify;
 }
 
 .stext-109 {
@@ -2218,6 +2231,7 @@ input.num-product::-webkit-inner-spin-button {
   font-family: Poppins-Light;
   font-size: 14px;
   line-height: 1.7857;
+  text-align: justify;
 }
 
 .stext-114 {
@@ -3012,7 +3026,7 @@ input.num-product::-webkit-inner-spin-button {
   z-index: -1;
   width: 100%;
   height: 100%;
-  border: 3px solid #ccc;
+  /* border: 3px solid #ccc; */
 }
 
 .how-bor1::before {

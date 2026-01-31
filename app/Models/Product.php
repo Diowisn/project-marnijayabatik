@@ -95,4 +95,31 @@ class Product extends Model
         
         return $images;
     }
+
+    public function getKategoriNamaAttribute()
+    {
+        // Jika relasi sudah dimuat
+        if ($this->relationLoaded('kategori') && $this->kategori instanceof \App\Models\Category) {
+            return $this->kategori->nama_kategori;
+        }
+        
+        // Jika belum, ambil dari database
+        if ($this->kategori) { // ini adalah integer (foreign key)
+            $category = \App\Models\Category::find($this->kategori);
+            return $category ? $category->nama_kategori : null;
+        }
+        
+        return null;
+    }
+
+    public function getKategoriIdAttribute()
+    {
+        // Jika relasi sudah dimuat
+        if ($this->relationLoaded('kategori') && $this->kategori instanceof \App\Models\Category) {
+            return $this->kategori->id;
+        }
+        
+        // Jika belum, gunakan nilai kolom langsung
+        return $this->kategori; // ini adalah integer
+    }
 }
