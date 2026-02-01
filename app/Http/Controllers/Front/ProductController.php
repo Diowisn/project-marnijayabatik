@@ -46,10 +46,8 @@ class ProductController extends Controller
     
     public function show($id)
     {
-        // PERBAIKAN: Tambahkan check untuk relasi
         $product = Product::with(['kategori', 'motif'])->findOrFail($id);
         
-        // Debug: Cek apakah relasi kategori ada
         if (!$product->kategori) {
             \Log::warning("Product {$id} doesn't have kategori relation");
         }
@@ -78,9 +76,8 @@ class ProductController extends Controller
             }
         }
         
-        // PERBAIKAN: Gunkan kolom 'kategori' untuk filter
         $relatedProducts = Product::with(['kategori', 'motif'])
-            ->where('kategori', $product->kategori) // Kolom 'kategori' bukan relasi
+            ->where('kategori', $product->kategori)
             ->where('id_produk', '!=', $id)
             ->take(4)
             ->get();

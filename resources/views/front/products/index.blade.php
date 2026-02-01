@@ -1,4 +1,4 @@
-@extends('layouts.app2')
+@extends('layouts.app')
 
 @section('title', 'Produk - Batik Marni Jaya')
 
@@ -69,8 +69,17 @@
 @endsection
 
 @section('content')
+<!-- Title page -->
+<div class="head-konten bg-img1" style="background-image: url('{{ asset('assets/images/about/bg-01.jpg') }}'); ">
+    <section class="txt-center p-lr-15 p-tb-92" style="background: rgba(0, 0, 0, 0.3);">
+        <h2 class="ltext-105 cl0 txt-center">
+            Produk Kami
+        </h2>
+    </section>
+</div>	
+
 <!-- Product -->
-<div class="bg0 m-t-95 p-b-140">
+<div class="bg0 m-t-55 p-b-140">
     <div class="container">
         <div class="flex-w flex-sb-m p-b-52">
             <div class="flex-w flex-l-m filter-tope-group m-tb-10">

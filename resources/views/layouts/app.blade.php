@@ -517,14 +517,19 @@
         });
         
         // Quantity buttons
-        $('.btn-num-product-down').on('click', function(){
-            var numProduct = Number($(this).next().val());
-            if(numProduct > 1) $(this).next().val(numProduct - 1);
+        $(document).on('click', '.js-modal1 .btn-num-product-down', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var numProduct = Number($('#quantity-input').val());
+            if(numProduct > 1) {
+                $('#quantity-input').val(numProduct - 1);
+            }
         });
-
-        $('.btn-num-product-up').on('click', function(){
-            var numProduct = Number($(this).prev().val());
-            $(this).prev().val(numProduct + 1);
+        $(document).on('click', '.js-modal1 .btn-num-product-up', function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var numProduct = Number($('#quantity-input').val());
+            $('#quantity-input').val(numProduct + 1);
         });
     });
     </script>

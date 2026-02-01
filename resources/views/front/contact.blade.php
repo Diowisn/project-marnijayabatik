@@ -1,4 +1,3 @@
-{{-- resources/views/front/contact.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Kontak - Batik Marni Jaya')

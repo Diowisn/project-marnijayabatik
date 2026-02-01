@@ -69,9 +69,18 @@
 @endsection
 
 @section('content')
+<!-- Title page -->
+<div class="head-konten bg-img1" style="background-image: url('{{ asset('assets/images/about/bg-01.jpg') }}'); ">
+    <section class="txt-center p-lr-15 p-tb-92" style="background: rgba(0, 0, 0, 0.3);">
+        <h2 class="ltext-105 cl0 txt-center">
+            Produk Detail
+        </h2>
+    </section>
+</div>	
+
 <!-- breadcrumb -->
 <div class="container">
-    <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-100 p-lr-0-lg">
+    <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-55 p-lr-0-lg">
         <a href="{{ route('home') }}" class="stext-109 cl8 hov-cl1 trans-04">
             Home
             <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
@@ -82,10 +91,8 @@
             <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
         </a>
 
-        {{-- PERBAIKAN: Cek apakah relasi kategori ada DAN bisa diakses --}}
         @php
-            // Cek apakah relasi kategori dimuat dan tersedia
-            $kategori = $product->kategori; // Ini adalah relasi object (jika dengan() atau load())
+            $kategori = $product->kategori;
         @endphp
         
         @if($kategori && is_object($kategori) && property_exists($kategori, 'id'))
@@ -94,9 +101,7 @@
                 <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
             </a>
         @elseif($product->kategori && is_numeric($product->kategori))
-            {{-- Jika $product->kategori adalah integer (foreign key) --}}
             @php
-                // Coba ambil kategori dari database
                 $kategoriModel = \App\Models\Category::find($product->kategori);
             @endphp
             @if($kategoriModel)
@@ -125,7 +130,6 @@
 
                         <div class="slick3 gallery-lb">
                             @php
-                                // Siapkan array semua gambar
                                 $allImages = [];
                                 
                                 // Gambar utama
@@ -246,7 +250,7 @@
                                     </div>
 
                                     <input class="mtext-104 cl3 txt-center num-product" type="number" 
-                                           name="num-product" value="1" id="quantity-main" min="{{ max(1, $product->min_beli ?? 1) }}">
+                                           name="num-product" value="1">
 
                                     <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                         <i class="fs-16 zmdi zmdi-plus"></i>
@@ -469,54 +473,259 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
-        // Quantity handler
-        $('.btn-num-product-down').on('click', function(e){
-            e.preventDefault();
-            var numProduct = Number($(this).next().val());
-            if(numProduct > {{ max(1, $product->min_beli ?? 1) }}) {
-                $(this).next().val(numProduct - 1);
-            }
-        });
-
-        $('.btn-num-product-up').on('click', function(e){
-            e.preventDefault();
-            var numProduct = Number($(this).prev().val());
-            $(this).prev().val(numProduct + 1);
-        });
-
-        // WhatsApp handler for detail page
-        $('.js-whatsapp-main').on('click', function(e) {
-            e.preventDefault();
-            
-            var productName = $(this).data('product-name');
-            var productPrice = $(this).data('product-price');
-            var productCategory = $(this).data('product-category');
-            var productMotif = $(this).data('product-motif');
-            var productBerat = $(this).data('product-berat');
-            var productBahan = $(this).data('product-bahan');
-            var productUkuran = $(this).data('product-ukuran');
-            var productPanjang = $(this).data('product-panjang');
-            var productDesc = $(this).data('product-desc');
-            var quantity = $('#quantity-main').val();
-            
-            // Build WhatsApp message
-            var message = `Halo, saya tertarik dengan produk:\n\n` +
-                         `📦 *${productName}*\n` +
-                         `💰 Harga: Rp ${parseInt(productPrice).toLocaleString('id-ID')}\n` +
-                         `📋 Kategori: ${productCategory}\n` +
-                         `🎨 Motif: ${productMotif}\n` +
-                         `⚖️ Berat: ${productBerat}\n` +
-                         `🧵 Bahan: ${productBahan}\n` +
-                         `📏 Ukuran: ${productUkuran}\n` +
-                         `📐 Panjang Tali: ${productPanjang}\n` +
-                         `🔢 Jumlah: ${quantity} pcs\n` +
-                         `📝 Deskripsi: ${productDesc.substring(0, 100)}...\n\n` +
-                         `Apakah produk ini tersedia?`;
-            
-            var whatsappUrl = `https://api.whatsapp.com/send?phone=6282323259808&text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-        });
+$(document).ready(function() {
+    // ========================================
+    // QUANTITY BUTTONS - MAIN PRODUCT (HALAMAN SHOW)
+    // ========================================
+    $('.sec-product-detail .btn-num-product-down').off('click').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var $input = $(this).next('.num-product');
+        var numProduct = Number($input.val());
+        if(numProduct > 1) {
+            $input.val(numProduct - 1);
+        }
     });
+
+    $('.sec-product-detail .btn-num-product-up').off('click').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var $input = $(this).prev('.num-product');
+        var numProduct = Number($input.val());
+        $input.val(numProduct + 1);
+    });
+
+    // ========================================
+    // WHATSAPP HANDLER - MAIN PRODUCT
+    // ========================================
+    $('.js-whatsapp-main').off('click').on('click', function(e) {
+        e.preventDefault();
+        
+        var productName = $(this).data('product-name');
+        var productPrice = $(this).data('product-price');
+        var productCategory = $(this).data('product-category');
+        var productMotif = $(this).data('product-motif');
+        var productBerat = $(this).data('product-berat');
+        var productBahan = $(this).data('product-bahan');
+        var productUkuran = $(this).data('product-ukuran');
+        var productPanjang = $(this).data('product-panjang');
+        var productDesc = $(this).data('product-desc');
+        var quantity = $('.sec-product-detail .num-product').first().val();
+        
+        var message = `Halo, saya tertarik dengan produk:\n\n` +
+                     `📦 *${productName}*\n` +
+                     `💰 Harga: Rp ${parseInt(productPrice).toLocaleString('id-ID')}\n` +
+                     `📋 Kategori: ${productCategory}\n` +
+                     `🎨 Motif: ${productMotif}\n` +
+                     `⚖️ Berat: ${productBerat}\n` +
+                     `🧵 Bahan: ${productBahan}\n` +
+                     `📏 Ukuran: ${productUkuran}\n` +
+                     `📐 Panjang Tali: ${productPanjang}\n` +
+                     `🔢 Jumlah: ${quantity} pcs\n` +
+                     `📝 Deskripsi: ${productDesc.substring(0, 100)}...\n\n` +
+                     `Apakah produk ini tersedia?`;
+        
+        var whatsappUrl = `https://api.whatsapp.com/send?phone=6282323259808&text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    });
+
+    // ========================================
+    // MODAL FUNCTIONALITY - PRODUK TERKAIT
+    // ========================================
+    
+    // Show modal when clicking "Lihat Detail" pada produk terkait
+    $(document).on('click', '.js-show-modal1', function(e) {
+        e.preventDefault();
+        
+        // Get product data from data attributes
+        const productName = $(this).data('product-name');
+        const productPrice = $(this).data('product-price');
+        const productDesc = $(this).data('product-desc');
+        const productCategory = $(this).data('product-category');
+        const productMotif = $(this).data('product-motif');
+        const productBerat = $(this).data('product-berat');
+        const productBahan = $(this).data('product-bahan');
+        const productUkuran = $(this).data('product-ukuran');
+        const productPanjang = $(this).data('product-panjang');
+        const productImage = $(this).data('product-image');
+        const productDetail1 = $(this).data('product-detail1');
+        const productDetail2 = $(this).data('product-detail2');
+        
+        // Update modal content
+        $('#modal-related-product-name').text(productName);
+        $('#modal-related-product-price').text('Rp ' + parseInt(productPrice).toLocaleString('id-ID'));
+        $('#modal-related-product-desc').text(productDesc || 'Tidak ada deskripsi');
+        $('#modal-related-product-category').text(productCategory || '-');
+        $('#modal-related-product-motif').text(productMotif || '-');
+        $('#modal-related-product-berat').text(productBerat || '-');
+        $('#modal-related-product-bahan').text(productBahan || '-');
+        $('#modal-related-product-ukuran').text(productUkuran || '-');
+        $('#modal-related-product-panjang').text(productPanjang || '-');
+        
+        // ========================================
+        // PERBAIKAN BUG: Destroy slider dan hapus semua gambar lama
+        // ========================================
+        
+        // Destroy existing slick if initialized - GUNAKAN ID
+        if ($('#slick3-related').hasClass('slick-initialized')) {
+            $('#slick3-related').slick('unslick');
+        }
+        
+        // PENTING: Hapus semua HTML lama dari slider - GUNAKAN ID
+        $('#slick3-related').empty();
+        $('#wrap-slick3-dots-related').empty();
+        $('#wrap-slick3-arrows-related').empty();
+        
+        // Build image gallery - HANYA untuk produk ini
+        let imageHtml = '';
+        const baseUrl = '{{ asset("") }}';
+        
+        // Main image
+        if (productImage && productImage !== 'null' && productImage !== '' && productImage !== null) {
+            const mainImageUrl = baseUrl + 'images/products/' + productImage;
+            imageHtml += `
+                <div class="item-slick3" data-thumb="${mainImageUrl}">
+                    <div class="wrap-pic-w pos-relative">
+                        <img src="${mainImageUrl}" alt="IMG-PRODUCT">
+                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${mainImageUrl}">
+                            <i class="fa fa-expand"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Detail image 1
+        if (productDetail1 && productDetail1 !== 'null' && productDetail1 !== '' && productDetail1 !== null && productDetail1 !== 'undefined') {
+            const detail1Url = baseUrl + 'images/products/detail/' + productDetail1;
+            imageHtml += `
+                <div class="item-slick3" data-thumb="${detail1Url}">
+                    <div class="wrap-pic-w pos-relative">
+                        <img src="${detail1Url}" alt="IMG-PRODUCT">
+                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${detail1Url}">
+                            <i class="fa fa-expand"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Detail image 2
+        if (productDetail2 && productDetail2 !== 'null' && productDetail2 !== '' && productDetail2 !== null && productDetail2 !== 'undefined') {
+            const detail2Url = baseUrl + 'images/products/detail2/' + productDetail2;
+            imageHtml += `
+                <div class="item-slick3" data-thumb="${detail2Url}">
+                    <div class="wrap-pic-w pos-relative">
+                        <img src="${detail2Url}" alt="IMG-PRODUCT">
+                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${detail2Url}">
+                            <i class="fa fa-expand"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Insert fresh images into slider - GUNAKAN ID
+        $('#slick3-related').html(imageHtml);
+        
+        // Small delay to ensure DOM is updated
+        setTimeout(function() {
+            // Initialize slick slider with fresh content - GUNAKAN ID
+            $('#slick3-related').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                fade: true,
+                infinite: true,
+                autoplay: false,
+                autoplaySpeed: 6000,
+                arrows: true,
+                appendArrows: $('#wrap-slick3-arrows-related'),
+                prevArrow:'<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+                nextArrow:'<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+                dots: true,
+                appendDots: $('#wrap-slick3-dots-related'),
+                dotsClass:'slick3-dots',
+                customPaging: function(slick, index) {
+                    var portrait = $(slick.$slides[index]).data('thumb');
+                    return '<img src=" ' + portrait + ' "/><div class="slick3-dot-overlay"></div>';
+                },  
+            });
+            
+            // Re-initialize magnific popup for modal gallery - GUNAKAN ID
+            $('#slick3-related').magnificPopup({
+                delegate: 'a',
+                type: 'image',
+                gallery: {
+                    enabled: true
+                },
+                mainClass: 'mfp-fade'
+            });
+        }, 100);
+        
+        // Store product data for WhatsApp
+        $('.js-whatsapp-modal-related').data({
+            'product-name': productName,
+            'product-price': productPrice
+        });
+        
+        // Reset quantity
+        $('#quantity-input-related').val(1);
+        
+        // Show modal
+        $('.js-modal-related').addClass('show-modal1');
+    });
+    
+    // Hide modal
+    $('.js-hide-modal-related, .js-modal-related .overlay-modal1').on('click', function() {
+        $('.js-modal-related').removeClass('show-modal1');
+        
+        // Cleanup saat modal ditutup - GUNAKAN ID
+        if ($('#slick3-related').hasClass('slick-initialized')) {
+            $('#slick3-related').slick('unslick');
+        }
+        $('#slick3-related').empty();
+        $('#wrap-slick3-dots-related').empty();
+        $('#wrap-slick3-arrows-related').empty();
+    });
+    
+    // WhatsApp integration from modal
+    $(document).on('click', '.js-whatsapp-modal-related', function(e) {
+        e.preventDefault();
+        
+        const productName = $(this).data('product-name');
+        const productPrice = $(this).data('product-price');
+        const quantity = $('#quantity-input-related').val() || 1;
+        const phone = '6282323259808';
+        
+        const message = `Halo, saya tertarik dengan produk:\n\n` +
+                      `Nama: ${productName}\n` +
+                      `Harga: Rp ${parseInt(productPrice).toLocaleString('id-ID')}\n` +
+                      `Jumlah: ${quantity}\n\n` +
+                      `Apakah produk ini tersedia?`;
+        
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+        
+        // Close modal and cleanup - GUNAKAN ID
+        $('.js-modal-related').removeClass('show-modal1');
+        if ($('#slick3-related').hasClass('slick-initialized')) {
+            $('#slick3-related').slick('unslick');
+        }
+        $('#slick3-related').empty();
+        $('#wrap-slick3-dots-related').empty();
+        $('#wrap-slick3-arrows-related').empty();
+    });
+    
+    // Quantity buttons - Modal Related - GUNAKAN CLASS JS KHUSUS
+    $(document).on('click', '.js-btn-minus-related', function(){
+        var numProduct = Number($(this).next().val());
+        if(numProduct > 1) $(this).next().val(numProduct - 1);
+    });
+
+    $(document).on('click', '.js-btn-plus-related', function(){
+        var numProduct = Number($(this).prev().val());
+        $(this).prev().val(numProduct + 1);
+    });
+});
 </script>
 @endpush
