@@ -60,6 +60,7 @@
         
         .logo-container {
             display: flex;
+            align-items: center;
             flex-direction: column;
             position: relative;
             margin-bottom: 20px;
@@ -247,7 +248,7 @@
             
             .logo-placeholder,
             .logo-img {
-                width: 60px;
+                width: 240px;
                 height: 60px;
             }
             
